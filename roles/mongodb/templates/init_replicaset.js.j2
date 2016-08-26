@@ -1,0 +1,6 @@
+rs.initiate()
+sleep(20000)
+{% for host in groups['mongodb_servers'] %}
+rs.add("{{ host }}:{{ mongodb.configuration.port }}")
+sleep(10000)
+{% endfor %}

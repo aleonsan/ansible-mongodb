@@ -1,0 +1,55 @@
+---
+- include: mongodb_server.yml
+  vars:
+    - mongodb_server_package_name: mongodb-org-server-{{ mongodb.build_version }}.el7.x86_64.rpm
+  tags:
+    - mongodb_server
+
+- include: mongodb_shell.yml
+  vars:
+    mongodb_shell_package_name: mongodb-org-shell-{{ mongodb.build_version }}.el7.x86_64.rpm
+  tags:
+    - mongodb_shell
+
+- include: mongodb_tools.yml
+  vars:
+    mongodb_tools_package_name: mongodb-org-tools-{{ mongodb.build_version }}.el7.x86_64.rpm
+  tags:
+    - mongodb_tools
+
+# try to do that work
+#- tasks:
+#    - name: check {{ item }} package
+#      stat: path={{ package_download_path }}/{{ item }}
+#      register: mongodb_package_exists
+#
+#    - name: download {{ item }} package if needed
+#      get_url: url={{ mongodb.download_mirror }}/{{ item }} dest={{ package_download_path }}
+#      when: not mongodb_server_package_exists.stat.exists 
+#
+#    - name: install {{ item }} package
+#      yum: name={{ package_download_path }}/{{ item }} state=present
+#
+#    - name: delete package downloaded if needed
+#      file: path={{ package_download_path }}/{{ item }} state=absent
+#      when: force_cleanup is defined and force_cleanup == "True"
+# 
+#  with_items: "{{ mongodb_packages }}"
+#  tags:
+#    - mongodb
+#    - mongodb_installation
+#
+#- name: create mongodb data directory
+#  file: path={{ mongodb.configuration.data_dir }} state=directory owner=mongod group=mongod
+#  notify: start mongodb
+#
+#- name: copy mongodb configuration
+#  template: src=mongod.conf.j2 dest=/etc/mongod.conf
+#  notify: restart mongodb
+#
+#- name: copy replicaset script
+#  template: src=init_replicaset.js.j2 dest=/tmp/init_replicaset.js
+#
+#- name: initialize relicaset
+#  command: /usr/bin/mongo --port {{ mongodb.configuration.port }} /tmp/init_replicaset.js
+#  notify: restart mongodb

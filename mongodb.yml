@@ -1,0 +1,6 @@
+---
+- hosts: mongodb_servers 
+  user: root
+  roles:
+    - firewall
+    - mongodb 

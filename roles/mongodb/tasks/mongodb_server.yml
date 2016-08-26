@@ -1,0 +1,29 @@
+- name: check mongodb-server package
+  stat: path={{ package_download_path }}/{{ mongodb_server_package_name }}
+  register: mongodb_server_package_exists
+
+- name: download mongodb-server package if needed
+  get_url: url={{ mongodb.download_mirror }}/{{ mongodb_server_package_name }} dest={{ package_download_path }}
+  when: not mongodb_server_package_exists.stat.exists 
+
+- name: install mongodb-server package
+  yum: name={{ package_download_path }}/{{ mongodb_server_package_name }} state=present
+
+- name: delete package downloaded if needed
+  file: path={{ package_download_path }}/{{ mongodb_server_package_name }} state=absent
+  when: force_cleanup is defined and force_cleanup == "True"
+
+- name: create mongodb data directory
+  file: path={{ mongodb.configuration.data_dir }} state=directory owner=mongod group=mongod
+  notify: start mongodb
+
+- name: copy mongodb configuration
+  template: src=mongod.conf.j2 dest=/etc/mongod.conf
+  notify: restart mongodb
+
+- name: copy replicaset script
+  template: src=init_replicaset.js.j2 dest=/tmp/init_replicaset.js
+
+- name: initialize relicaset
+  command: /usr/bin/mongo --port {{ mongodb.configuration.port }} /tmp/init_replicaset.js
+  notify: restart mongodb

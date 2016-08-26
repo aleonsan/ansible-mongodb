@@ -1,0 +1,14 @@
+- name: check mongodb-shell package
+  stat: path={{ package_download_path }}/{{ mongodb_shell_package_name }}
+  register: mongodb_shell_package_exists
+
+- name: download mongodb-shell package if needed
+  get_url: url={{ mongodb.download_mirror }}/{{ mongodb_shell_package_name }} dest={{ package_download_path }}
+  when: not mongodb_shell_package_exists.stat.exists 
+
+- name: install mongodb-shell package
+  yum: name={{ package_download_path }}/{{ mongodb_shell_package_name }} state=present
+
+- name: delete package downloaded if needed
+  file: path={{ package_download_path }}/{{ mongodb_shell_package_name }} state=absent
+  when: force_cleanup is defined and force_cleanup == "True"

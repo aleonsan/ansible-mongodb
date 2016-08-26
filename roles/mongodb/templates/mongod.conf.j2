@@ -1,0 +1,14 @@
+# logging
+logpath={{ mongodb.configuration.log_path }}
+logappend=true
+
+# daemon 
+fork=true
+pidfilepath=/var/run/mongodb/mongod.pid
+
+# server settings
+dbpath={{ mongodb.configuration.data_dir }}
+nojournal=true
+
+# replicaset
+replSet={{ mongodb.configuration.replicaset_name }}

@@ -1,0 +1,7 @@
+---
+- name: init firewalld
+  service: name=firewalld state=started
+
+- name: open mongodb ports
+  firewalld: port={{ mongodb.configuration.port }}/tcp permanent=true immediate=yes state=enabled
+  notify: restart firewalld

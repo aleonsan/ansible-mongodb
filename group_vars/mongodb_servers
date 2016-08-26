@@ -1,0 +1,10 @@
+package_download_path : "/tmp"
+mongodb_version: 3.2
+mongodb:
+  build_version: 3.2.9-1
+  download_mirror: https://repo.mongodb.org/yum/redhat/7Server/mongodb-org/{{ mongodb_version }}/x86_64/RPMS
+  configuration:
+    port: 27017 
+    data_dir: /var/lib/mongodb
+    log_path: /var/log/mongodb
+    replicaset_name: rs0
